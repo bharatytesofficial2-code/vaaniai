@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bharat Bytes AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A017;
+    --gold-light: #F0C040;
+    --gold-dim: #8B6914;
+    --bg-deep: #0A0A0A;
+    --bg-card: #111111;
+    --bg-card2: #161616;
+    --bg-sidebar: #0D0D0D;
+    --border: rgba(212,160,23,0.18);
+    --border-strong: rgba(212,160,23,0.4);
+    --text: #E8E8E8;
+    --text-muted: #888;
+    --text-dim: #555;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --sidebar-w: 230px;
+    --transition: 0.22s cubic-bezier(.4,0,.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 99px; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    padding: 0 0 20px;
+    transition: transform var(--transition);
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--gold), #8B6914);
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 18px;
+  }
+
+  .logo-text { line-height: 1.1; }
+  .logo-text span:first-child {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: .5px;
+  }
+  .logo-text span:last-child {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .nav { flex: 1; padding: 14px 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all var(--transition);
+    text-decoration: none;
+    position: relative;
+  }
+  .nav-item:hover { background: rgba(212,160,23,0.08); color: var(--text); }
+  .nav-item.active {
+    background: linear-gradient(90deg, rgba(212,160,23,0.18), rgba(212,160,23,0.05));
+    color: var(--gold);
+    border: 1px solid var(--border);
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute; left: 0; top: 20%; bottom: 20%;
+    width: 3px; border-radius: 0 3px 3px 0;
+    background: var(--gold);
+  }
+  .nav-icon { font-size: 16px; min-width: 20px; text-align: center; }
+
+  .streak-box {
+    margin: 0 12px;
+    background: linear-gradient(135deg, rgba(212,160,23,0.15), rgba(212,160,23,0.05));
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+  }
+  .streak-icon { font-size: 20px; }
+  .streak-label { font-size: 12px; color: var(--gold); font-weight: 700; }
+  .streak-sub { font-size: 11px; color: var(--gold-dim); font-weight: 500; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: fixed;
+    top: 0; left: var(--sidebar-w); right: 0;
+    height: 62px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 24px;
+    z-index: 90;
+  }
+
+  .search-bar {
+    flex: 1; max-width: 480px;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 0 16px;
+    height: 38px;
+    transition: border-color var(--transition);
+  }
+  .search-bar:focus-within { border-color: var(--gold-dim); }
+  .search-bar input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-family: 'Outfit', sans-serif;
+    font-size: 13.5px;
+  }
+  .search-bar input::placeholder { color: var(--text-dim); }
+
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+
+  .btn-upgrade {
+    display: flex; align-items: center; gap: 6px;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .btn-upgrade:hover {
+    background: var(--gold);
+    color: #000;
+    border-color: var(--gold);
+  }
+
+  .notif-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    display: grid; place-items: center;
+    cursor: pointer; font-size: 16px;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .notif-btn:hover { border-color: var(--gold-dim); }
+  .notif-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .user-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 12px 4px 4px;
+    cursor: pointer;
+    transition: border-color var(--transition);
+  }
+  .user-pill:hover { border-color: var(--gold-dim); }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #5a3e00);
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 700; color: #000;
+  }
+  .user-name { font-size: 13px; font-weight: 500; }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    padding-top: 62px;
+    flex: 1;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .content { padding: 28px 28px 100px; max-width: 1200px; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 26px; font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .section-sub {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .section-sub em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+  .btn-create-char {
+    display: flex; align-items: center; gap: 8px;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .btn-create-char:hover {
+    background: rgba(212,160,23,0.12);
+    border-color: var(--gold);
+  }
+
+  /* ── CHARACTER CARDS ── */
+  .chars-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .char-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: all var(--transition);
+    min-height: 280px;
+    display: flex; flex-direction: column;
+  }
+  .char-card:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(212,160,23,0.12);
+  }
+
+  .char-img-wrap {
+    position: relative;
+    height: 170px;
+    overflow: hidden;
+    background: linear-gradient(160deg, #1a1400 0%, #0f0f0f 100%);
+    display: grid; place-items: center;
+    font-size: 70px;
+  }
+
+  .char-img-wrap .char-emoji { transition: transform var(--transition); }
+  .char-card:hover .char-emoji { transform: scale(1.08); }
+
+  .char-online {
+    position: absolute; top: 10px; right: 10px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+  }
+
+  .char-info { padding: 12px 14px 14px; flex: 1; display: flex; flex-direction: column; }
+  .char-name { font-weight: 700; font-size: 14.5px; margin-bottom: 4px; }
+  .char-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; flex: 1; }
+
+  .btn-start-chat {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12.5px; font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    width: 100%;
+  }
+  .btn-start-chat:hover {
+    background: var(--gold);
+    color: #000;
+    border-color: var(--gold);
+  }
+
+  /* Create your own card */
+  .char-card.create-card {
+    background: linear-gradient(160deg, #111 0%, #1a1200 100%);
+    border: 1px solid var(--gold-dim);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 20px;
+    gap: 10px;
+  }
+  .create-card-icon {
+    width: 60px; height: 60px;
+    border: 2px solid var(--gold-dim);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 26px;
+    color: var(--gold);
+    transition: all var(--transition);
+  }
+  .char-card.create-card:hover .create-card-icon {
+    background: rgba(212,160,23,0.1);
+    border-color: var(--gold);
+  }
+  .create-card-title {
+    font-weight: 700; font-size: 14px;
+    color: var(--gold); line-height: 1.3;
+  }
+  .create-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .btn-create-now {
+    background: linear-gradient(135deg, var(--gold), #8B6914);
+    color: #000;
+    border: none;
+    padding: 9px 20px;
+    border-radius: var(--radius-sm);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: all var(--transition);
+  }
+  .btn-create-now:hover { opacity: 0.88; transform: scale(0.98); }
+
+  /* ── MODE SECTION ── */
+  .section-label {
+    font-size: 17px; font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  .modes-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .mode-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .mode-card:hover {
+    border-color: var(--gold-dim);
+    background: rgba(212,160,23,0.06);
+    transform: translateY(-2px);
+  }
+  .mode-icon { font-size: 22px; margin-bottom: 8px; display: block; }
+  .mode-name { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .mode-sub { font-size: 11px; color: var(--text-muted); }
+
+  /* ── BOTTOM SECTIONS ── */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+
+  .panel-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .panel-sub { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; }
+
+  .char-input {
+    width: 100%;
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13.5px;
+    outline: none;
+    margin-bottom: 14px;
+    transition: border-color var(--transition);
+  }
+  .char-input:focus { border-color: var(--gold-dim); }
+  .char-input::placeholder { color: var(--text-dim); }
+
+  .btn-generate {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(212,160,23,0.2), rgba(212,160,23,0.08));
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 11px;
+    border-radius: var(--radius-sm);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all var(--transition);
+  }
+  .btn-generate:hover {
+    background: var(--gold);
+    color: #000;
+    border-color: var(--gold);
+  }
+
+  /* Recent chats */
+  .recent-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .view-all {
+    font-size: 12.5px; color: var(--gold);
+    cursor: pointer; font-weight: 600;
+    transition: opacity var(--transition);
+  }
+  .view-all:hover { opacity: 0.7; }
+
+  .chat-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: all var(--transition);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    margin: 0 -8px;
+  }
+  .chat-item:hover { background: rgba(212,160,23,0.05); }
+
+  .chat-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, #2a1f00, #111);
+    display: grid; place-items: center;
+    font-size: 20px; flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .chat-info { flex: 1; min-width: 0; }
+  .chat-name { font-size: 13.5px; font-weight: 600; }
+  .chat-preview { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-meta { display: flex; align-items: center; gap: 6px; flex-direction: column; align-items: flex-end; }
+  .chat-time { font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+  .chat-more { font-size: 16px; color: var(--text-dim); cursor: pointer; }
+
+  /* ── QUICK ACTIONS ── */
+  .quick-actions {
+    position: fixed;
+    bottom: 0; left: var(--sidebar-w); right: 0;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+    z-index: 80;
+  }
+
+  .quick-btn {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 99px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .quick-btn:hover {
+    border-color: var(--gold-dim);
+    color: var(--gold);
+    background: rgba(212,160,23,0.08);
+  }
+
+  /* ── HAMBURGER ── */
+  .hamburger {
+    display: none;
+    background: none; border: none;
+    color: var(--text); font-size: 22px;
+    cursor: pointer; padding: 4px;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 99;
+    backdrop-filter: blur(2px);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .chars-grid { grid-template-columns: repeat(3, 1fr); }
+    .modes-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 900px) {
+    .bottom-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    :root { --sidebar-w: 230px; }
+
+    .sidebar {
+      transform: translateX(-100%);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+    .sidebar-overlay.open { display: block; }
+
+    .topbar { left: 0; }
+    .main { margin-left: 0; }
+    .quick-actions { left: 0; }
+    .hamburger { display: block; }
+
+    .chars-grid { grid-template-columns: repeat(2, 1fr); }
+    .modes-grid { grid-template-columns: repeat(2, 1fr); }
+    .content { padding: 20px 16px 110px; }
+    .section-title { font-size: 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .chars-grid { grid-template-columns: 1fr 1fr; }
+    .modes-grid { grid-template-columns: repeat(2, 1fr); }
+    .quick-actions { gap: 8px; padding: 10px 12px; }
+    .quick-btn { font-size: 12px; padding: 7px 10px; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .char-card { animation: fadeUp .4s both; }
+  .char-card:nth-child(1) { animation-delay: .05s; }
+  .char-card:nth-child(2) { animation-delay: .10s; }
+  .char-card:nth-child(3) { animation-delay: .15s; }
+  .char-card:nth-child(4) { animation-delay: .20s; }
+  .char-card:nth-child(5) { animation-delay: .25s; }
+
+  .mode-card { animation: fadeUp .4s both; }
+  .mode-card:nth-child(1) { animation-delay: .30s; }
+  .mode-card:nth-child(2) { animation-delay: .35s; }
+  .mode-card:nth-child(3) { animation-delay: .40s; }
+  .mode-card:nth-child(4) { animation-delay: .45s; }
+  .mode-card:nth-child(5) { animation-delay: .50s; }
+  .mode-card:nth-child(6) { animation-delay: .55s; }
+
+  /* Gold shimmer on hover for cards */
+  .char-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(212,160,23,0.04) 100%);
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+  .char-card:hover::after { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo" onclick="window.location.href='index.html'">
+    <div class="logo-icon">🧠</div>
+    <div class="logo-text">
+      <span>Bharat Bytes</span>
+      <span>AI</span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <a class="nav-item active" onclick="window.location.href='index.html'">
+      <span class="nav-icon">🏠</span> Home
+    </a>
+    <a class="nav-item" onclick="window.location.href='chat.html'">
+      <span class="nav-icon">💬</span> Chat
+    </a>
+    <a class="nav-item" onclick="window.location.href='voice.html'">
+      <span class="nav-icon">🎙️</span> Voice Chat
+    </a>
+    <a class="nav-item" onclick="window.location.href='scenario.html'">
+      <span class="nav-icon">🎭</span> Scenario Mode
+    </a>
+    <a class="nav-item" onclick="window.location.href='mentor.html'">
+      <span class="nav-icon">🎓</span> Mentor Mode
+    </a>
+    <a class="nav-item" onclick="window.location.href='challenge.html'">
+      <span class="nav-icon">⚔️</span> Challenge Mode
+    </a>
+    <a class="nav-item" onclick="window.location.href='story.html'">
+      <span class="nav-icon">📖</span> Story Mode
+    </a>
+    <a class="nav-item" onclick="window.location.href='history.html'">
+      <span class="nav-icon">🕐</span> History
+    </a>
+    <a class="nav-item" onclick="window.location.href='bookmarks.html'">
+      <span class="nav-icon">🔖</span> Bookmarks
+    </a>
+    <a class="nav-item" onclick="window.location.href='profile.html'">
+      <span class="nav-icon">👤</span> Profile
+    </a>
+    <a class="nav-item" onclick="window.location.href='settings.html'">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+  </nav>
+
+  <div class="streak-box" onclick="window.location.href='profile.html'">
+    <div class="streak-icon">⚡</div>
+    <div>
+      <div class="streak-label">Daily Streak</div>
+      <div class="streak-sub">7 Days 🔥</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">☰</button>
+  <div class="search-bar">
+    <span>🔍</span>
+    <input type="text" placeholder="Search anything...">
+  </div>
+  <div class="topbar-right">
+    <button class="btn-upgrade" onclick="window.location.href='upgrade.html'">
+      👑 Upgrade to Pro
+    </button>
+    <div class="notif-btn" onclick="window.location.href='notifications.html'">
+      🔔
+      <div class="notif-dot"></div>
+    </div>
+    <div class="user-pill" onclick="window.location.href='profile.html'">
+      <div class="user-avatar">A</div>
+      <span class="user-name">Arshdeep</span>
+      <span style="color:var(--text-dim);font-size:11px;">▾</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="content">
+
+    <!-- Characters Section -->
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Talk to AI Personalities</h1>
+        <p class="section-sub">Not just answers. <em>Real conversations.</em></p>
+      </div>
+      <button class="btn-create-char" onclick="window.location.href='create-character.html'">
+        ✦ Create Your Own Character
+      </button>
+    </div>
+
+    <div class="chars-grid">
+      <!-- Sidhu Moosewala -->
+      <div class="char-card" onclick="window.location.href='chat.html?char=punjab-hustler'">
+        <div class="char-img-wrap">
+          <span class="char-emoji">🎤</span>
+          <div class="char-online"></div>
+        </div>
+        <div class="char-info">
+          <div class="char-name">Punjab Hustler</div>
+          <div class="char-desc">Straight talk. No filter. Motivation &amp; Life Lessons.</div>
+          <button class="btn-start-chat">💬 Start Chat</button>
+        </div>
+      </div>
+
+      <!-- Einstein / Genius Mode -->
+      <div class="char-card" onclick="window.location.href='chat.html?char=genius-mode'">
+        <div class="char-img-wrap" style="background: linear-gradient(160deg,#0a1a2a,#0f0f0f)">
+          <span class="char-emoji">🧬</span>
+          <div class="char-online"></div>
+        </div>
+        <div class="char-info">
+          <div class="char-name">Genius Mode</div>
+          <div class="char-desc">Science, facts, logic and mind-blowing explanations.</div>
+          <button class="btn-start-chat">💬 Start Chat</button>
+        </div>
+      </div>
+
+      <!-- Elon Musk -->
+      <div class="char-card" onclick="window.location.href='chat.html?char=elon-musk'">
+        <div class="char-img-wrap" style="background: linear-gradient(160deg,#0a1a10,#0f0f0f)">
+          <span class="char-emoji">🚀</span>
+          <div class="char-online"></div>
+        </div>
+        <div class="char-info">
+          <div class="char-name">Elon Musk</div>
+          <div class="char-desc">Think big. Innovate. Build the future.</div>
+          <button class="btn-start-chat">💬 Start Chat</button>
+        </div>
+      </div>
+
+      <!-- APJ Abdul Kalam -->
+      <div class="char-card" onclick="window.location.href='chat.html?char=apj-kalam'">
+        <div class="char-img-wrap" style="background: linear-gradient(160deg,#1a0f0a,#0f0f0f)">
+          <span class="char-emoji">🌠</span>
+          <div class="char-online"></div>
+        </div>
+        <div class="char-info">
+          <div class="char-name">APJ Abdul Kalam</div>
+          <div class="char-desc">Dream big. Work hard. Inspire the nation.</div>
+          <button class="btn-start-chat">💬 Start Chat</button>
+        </div>
+      </div>
+
+      <!-- Create your own -->
+      <div class="char-card create-card" onclick="window.location.href='create-character.html'">
+        <div class="create-card-icon">👤✦</div>
+        <div class="create-card-title">Create Your Own Character</div>
+        <div class="create-card-sub">Add any personality you want to chat with.</div>
+        <button class="btn-create-now">✦ Create Now</button>
+      </div>
+    </div>
+
+    <!-- Choose Your Mode -->
+    <div class="section-label">Choose Your Mode</div>
+    <div class="modes-grid">
+      <div class="mode-card" onclick="window.location.href='chat.html'">
+        <span class="mode-icon">💬</span>
+        <div class="mode-name">Chat Mode</div>
+        <div class="mode-sub">Free Chat</div>
+      </div>
+      <div class="mode-card" onclick="window.location.href='voice.html'">
+        <span class="mode-icon">🎤</span>
+        <div class="mode-name">Voice Chat</div>
+        <div class="mode-sub">Speak &amp; Listen</div>
+      </div>
+      <div class="mode-card" onclick="window.location.href='scenario.html'">
+        <span class="mode-icon">🎭</span>
+        <div class="mode-name">Scenario Mode</div>
+        <div class="mode-sub">Real-life Situations</div>
+      </div>
+      <div class="mode-card" onclick="window.location.href='mentor.html'">
+        <span class="mode-icon">🎓</span>
+        <div class="mode-name">Mentor Mode</div>
+        <div class="mode-sub">Guidance &amp; Advice</div>
+      </div>
+      <div class="mode-card" onclick="window.location.href='challenge.html'">
+        <span class="mode-icon">🏆</span>
+        <div class="mode-name">Challenge Mode</div>
+        <div class="mode-sub">Test Yourself</div>
+      </div>
+      <div class="mode-card" onclick="window.location.href='story.html'">
+        <span class="mode-icon">📖</span>
+        <div class="mode-name">Story Mode</div>
+        <div class="mode-sub">Stories &amp; Fun</div>
+      </div>
+    </div>
+
+    <!-- Bottom grid -->
+    <div class="bottom-grid">
+      <!-- Create Custom Character -->
+      <div class="panel">
+        <div class="panel-title">Create Custom Character</div>
+        <div class="panel-sub">Type any name and AI will behave like that personality</div>
+        <input class="char-input" type="text" id="customCharInput" placeholder="e.g. Elon Musk, Steve Jobs, APJ Abdul Kalam...">
+        <button class="btn-generate" onclick="goToCustomChar()">
+          ✨ Generate Character
+        </button>
+      </div>
+
+      <!-- Recent Chats -->
+      <div class="panel">
+        <div class="recent-header">
+          <div class="panel-title">Recent Chats</div>
+          <span class="view-all" onclick="window.location.href='history.html'">View All</span>
+        </div>
+
+        <div class="chat-item" onclick="window.location.href='chat.html?char=punjab-hustler'">
+          <div class="chat-avatar">🎤</div>
+          <div class="chat-info">
+            <div class="chat-name">Punjab Hustler</div>
+            <div class="chat-preview">Bhai, zindagi jeeni hai toh darna kaisa...</div>
+          </div>
+          <div class="chat-meta">
+            <span class="chat-time">10:30 AM</span>
+            <span class="chat-more">⋯</span>
+          </div>
+        </div>
+
+        <div class="chat-item" onclick="window.location.href='chat.html?char=genius-mode'">
+          <div class="chat-avatar">🧬</div>
+          <div class="chat-info">
+            <div class="chat-name">Genius Mode</div>
+            <div class="chat-preview">The theory of relativity states that...</div>
+          </div>
+          <div class="chat-meta">
+            <span class="chat-time">Yesterday</span>
+            <span class="chat-more">⋯</span>
+          </div>
+        </div>
+
+        <div class="chat-item" onclick="window.location.href='chat.html?char=elon-musk'">
+          <div class="chat-avatar">🚀</div>
+          <div class="chat-info">
+            <div class="chat-name">Elon Musk</div>
+            <div class="chat-preview">When something is important enough...</div>
+          </div>
+          <div class="chat-meta">
+            <span class="chat-time">2 Days Ago</span>
+            <span class="chat-more">⋯</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ── QUICK ACTIONS ── -->
+<div class="quick-actions">
+  <button class="quick-btn" onclick="window.location.href='chat.html?mode=motivate'">🎯 Motivate Me</button>
+  <button class="quick-btn" onclick="window.location.href='chat.html?mode=life-advice'">💡 Life Advice</button>
+  <button class="quick-btn" onclick="window.location.href='chat.html?mode=business'">🚀 Business Idea</button>
+  <button class="quick-btn" onclick="window.location.href='chat.html?mode=feeling-down'">😔 I Am Feeling Down</button>
+  <button class="quick-btn" onclick="window.location.href='chat.html?mode=study'">📚 Study Help</button>
+  <button class="quick-btn" onclick="window.location.href='chat.html?mode=fun'">🎲 Fun Mode</button>
+</div>
+
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+  function goToCustomChar() {
+    const val = document.getElementById('customCharInput').value.trim();
+    if (val) {
+      window.location.href = 'chat.html?char=' + encodeURIComponent(val);
+    } else {
+      document.getElementById('customCharInput').focus();
+      document.getElementById('customCharInput').style.borderColor = '#D4A017';
+      setTimeout(() => {
+        document.getElementById('customCharInput').style.borderColor = '';
+      }, 1500);
+    }
+  }
+  document.getElementById('customCharInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') goToCustomChar();
+  });
+</script>
+</body>
+</html>
