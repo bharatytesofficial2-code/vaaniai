@@ -1,1 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Punjab Hustler 🔥</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+Punjabi:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark1: #111111;
+    --dark2: #1a1a1a;
+    --dark3: #222222;
+    --dark4: #2a2a2a;
+    --gold: #c9a84c;
+    --gold2: #e8c96a;
+    --gold3: #f5d97a;
+    --gold-dim: #7a5f28;
+    --gold-glow: rgba(201, 168, 76, 0.18);
+    --green: #25d366;
+    --grey-msg: #1e1e1e;
+    --text: #f0f0f0;
+    --text-dim: #888;
+    --text-muted: #555;
+    --radius-msg: 18px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
 
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--black);
+    color: var(--text);
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .phone-wrap {
+    width: 100%;
+    max-width: 420px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--dark1);
+    padding: 10px 14px 10px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.6);
+  }
+
+  .back-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--gold); font-size: 22px;
+    padding: 4px 6px; border-radius: 8px;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { background: var(--gold-glow); }
+
+  .avatar-wrap {
+    position: relative; flex-shrink: 0;
+  }
+  .avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 12px rgba(201,168,76,0.4);
+    overflow: hidden;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .online-dot {
+    position: absolute; bottom: 1px; right: 1px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--green);
+    border: 2px solid var(--dark1);
+    box-shadow: 0 0 6px rgba(37,211,102,0.7);
+  }
+
+  .header-info { flex: 1; min-width: 0; }
+  .header-name {
+    font-size: 16px; font-weight: 700;
+    color: var(--text); letter-spacing: 0.2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .header-status {
+    font-size: 12px; color: var(--green); font-weight: 500;
+    display: flex; align-items: center; gap: 4px; margin-top: 1px;
+  }
+  .header-status::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); display: inline-block;
+    box-shadow: 0 0 5px rgba(37,211,102,0.8);
+    animation: pulse-green 2s infinite;
+  }
+  @keyframes pulse-green {
+    0%,100% { box-shadow: 0 0 5px rgba(37,211,102,0.8); }
+    50% { box-shadow: 0 0 10px rgba(37,211,102,1); }
+  }
+
+  .header-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .header-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--gold); font-size: 20px;
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .header-btn:hover { background: var(--gold-glow); transform: scale(1.05); }
+  .header-btn svg { width: 20px; height: 20px; fill: var(--gold); }
+
+  /* ── CHAT AREA ── */
+  .chat-bg {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: 12px 10px 8px;
+    background: var(--black);
+    scroll-behavior: smooth;
+    position: relative;
+  }
+  .chat-bg::-webkit-scrollbar { width: 3px; }
+  .chat-bg::-webkit-scrollbar-thumb { background: var(--dark4); border-radius: 4px; }
+
+  /* subtle bg pattern */
+  .chat-bg::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(201,168,76,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(201,168,76,0.03) 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  /* date divider */
+  .date-divider {
+    text-align: center; margin: 10px 0;
+    position: relative; z-index: 1;
+  }
+  .date-divider span {
+    background: var(--dark3); color: var(--text-dim);
+    font-size: 11px; padding: 4px 12px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* message row */
+  .msg-row {
+    display: flex; margin-bottom: 4px;
+    position: relative; z-index: 1;
+    animation: msgIn 0.25s cubic-bezier(.23,1,.32,1) both;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .msg-row.user { justify-content: flex-end; }
+  .msg-row.ai   { justify-content: flex-start; }
+
+  /* bubble */
+  .bubble {
+    max-width: 76%; padding: 9px 13px;
+    border-radius: var(--radius-msg);
+    font-size: 14.5px; line-height: 1.45;
+    position: relative; word-break: break-word;
+  }
+  .bubble.user {
+    background: linear-gradient(135deg, #8a6520 0%, var(--gold) 60%, var(--gold3) 100%);
+    color: #1a0f00;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 12px rgba(201,168,76,0.3);
+    font-weight: 500;
+  }
+  .bubble.ai {
+    background: var(--grey-msg);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .bubble-meta {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 3px; margin-top: 4px;
+    font-size: 10.5px;
+  }
+  .bubble.user .bubble-meta { color: rgba(30,15,0,0.65); }
+  .bubble.ai   .bubble-meta { color: var(--text-muted); }
+
+  .ticks { display: flex; align-items: center; }
+  .ticks svg { width: 15px; height: 10px; }
+  .ticks.read svg path { stroke: #53bdeb; }
+  .ticks.sent svg path { stroke: rgba(30,15,0,0.5); }
+
+  /* voice bubble */
+  .voice-bubble {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 13px; min-width: 200px;
+  }
+  .play-btn {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.15s;
+  }
+  .bubble.user .play-btn {
+    background: rgba(0,0,0,0.2);
+  }
+  .bubble.ai .play-btn {
+    background: var(--gold-glow);
+    border: 1px solid rgba(201,168,76,0.3);
+  }
+  .play-btn:hover { transform: scale(1.08); }
+  .play-btn svg { width: 14px; height: 14px; }
+  .bubble.user .play-btn svg { fill: #1a0f00; }
+  .bubble.ai   .play-btn svg { fill: var(--gold); }
+
+  .waveform {
+    flex: 1; display: flex; align-items: center; gap: 2px;
+    height: 32px;
+  }
+  .wave-bar {
+    border-radius: 2px; flex-shrink: 0; width: 3px;
+    transition: background 0.2s;
+    animation: wavePulse 1.2s ease-in-out infinite;
+  }
+  .bubble.user .wave-bar { background: rgba(0,0,0,0.35); }
+  .bubble.ai   .wave-bar { background: rgba(201,168,76,0.5); }
+  @keyframes wavePulse {
+    0%,100% { opacity: 0.6; }
+    50%      { opacity: 1; }
+  }
+  .wave-dur {
+    font-size: 11px; flex-shrink: 0; font-weight: 500;
+  }
+  .bubble.user .wave-dur { color: rgba(0,0,0,0.55); }
+  .bubble.ai   .wave-dur { color: var(--text-dim); }
+
+  /* typing indicator */
+  .typing-indicator {
+    display: none; align-items: center; gap: 10px;
+    padding: 4px 0 8px 4px; position: relative; z-index: 1;
+  }
+  .typing-indicator.visible { display: flex; }
+  .typing-bubble {
+    background: var(--grey-msg);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: var(--radius-msg);
+    border-bottom-left-radius: 4px;
+    padding: 10px 14px;
+    display: flex; gap: 5px; align-items: center;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gold); opacity: 0.6;
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.18s; }
+  .dot:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes bounce {
+    0%,60%,100% { transform: translateY(0); opacity: 0.6; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── QUICK ACTIONS ── */
+  .quick-actions {
+    display: flex; gap: 7px; padding: 8px 10px 6px;
+    overflow-x: auto; flex-shrink: 0;
+    scrollbar-width: none;
+    background: var(--black);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .quick-actions::-webkit-scrollbar { display: none; }
+  .qa-btn {
+    background: var(--dark2); border: 1px solid rgba(201,168,76,0.25);
+    color: var(--gold2); font-family: 'Outfit', sans-serif;
+    font-size: 12px; font-weight: 500;
+    padding: 6px 13px; border-radius: 20px;
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .qa-btn:hover, .qa-btn:active {
+    background: var(--gold-glow);
+    border-color: var(--gold);
+    color: var(--gold3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(201,168,76,0.2);
+  }
+
+  /* ── INPUT AREA ── */
+  .input-area {
+    background: var(--dark1);
+    padding: 8px 10px 10px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    flex-shrink: 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+  }
+
+  .input-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .input-attach {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-dim); font-size: 22px;
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .input-attach:hover { color: var(--gold); background: var(--gold-glow); }
+  .input-attach svg { width: 22px; height: 22px; }
+
+  .input-box {
+    flex: 1; background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 24px; padding: 10px 16px;
+    color: var(--text); font-family: 'Outfit', sans-serif;
+    font-size: 14.5px; outline: none; resize: none;
+    max-height: 100px; overflow-y: auto; line-height: 1.4;
+    transition: border-color 0.2s;
+    scrollbar-width: none;
+  }
+  .input-box::-webkit-scrollbar { display: none; }
+  .input-box:focus { border-color: rgba(201,168,76,0.4); }
+  .input-box::placeholder { color: var(--text-muted); }
+
+  .mic-btn {
+    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #8a6520, var(--gold));
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 14px rgba(201,168,76,0.45);
+    transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .mic-btn::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  }
+  .mic-btn:hover { transform: scale(1.05); box-shadow: 0 4px 18px rgba(201,168,76,0.6); }
+  .mic-btn:active { transform: scale(0.96); }
+  .mic-btn svg { width: 20px; height: 20px; fill: #1a0f00; position: relative; }
+  .mic-btn.recording { animation: recordPulse 1s infinite; }
+  @keyframes recordPulse {
+    0%,100% { box-shadow: 0 3px 14px rgba(201,168,76,0.45); }
+    50%      { box-shadow: 0 0 0 8px rgba(201,168,76,0.15), 0 3px 14px rgba(201,168,76,0.6); }
+  }
+
+  .send-btn {
+    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #6a4e18, var(--gold));
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 14px rgba(201,168,76,0.35);
+    transition: all 0.2s; display: none;
+    position: relative; overflow: hidden;
+  }
+  .send-btn::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  }
+  .send-btn:hover { transform: scale(1.05); }
+  .send-btn:active { transform: scale(0.95); }
+  .send-btn svg { width: 18px; height: 18px; fill: #1a0f00; position: relative; }
+  .send-btn.visible { display: flex; }
+
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" aria-label="Back">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="avatar-wrap">
+      <div class="avatar">🤖</div>
+      <div class="online-dot"></div>
+    </div>
+    <div class="header-info">
+      <div class="header-name">Punjab Hustler 🔥</div>
+      <div class="header-status">Online</div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" aria-label="Voice Call">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- CHAT AREA -->
+ 
+
+    <!-- Typing indicator -->
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="typing-bubble">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions">
+    <button class="qa-btn" onclick="quickAction('Motivate Me 🔥')">🔥 Motivate Me</button>
+    <button class="qa-btn" onclick="quickAction('Life Advice 🧠')">🧠 Life Advice</button>
+    <button class="qa-btn" onclick="quickAction('Business Tips 💼')">💼 Business Tips</button>
+    <button class="qa-btn" onclick="quickAction('I Am Feeling Down 😔')">😔 Feeling Down</button>
+  </div>
+
+  <!-- INPUT AREA -->
+  <div class="input-area">
+    <div class="input-row">
+      <button class="input-attach" aria-label="Attach">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+        </svg>
+      </button>
+      <div
+        class="input-box"
+        id="msgInput"
+        contenteditable="true"
+        data-placeholder="Message..."
+        role="textbox"
+        aria-label="Message"
+      ></div>
+      <button class="mic-btn" id="micBtn" aria-label="Voice message" onclick="handleMic()">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 1a4 4 0 014 4v6a4 4 0 01-8 0V5a4 4 0 014-4z"/>
+          <path d="M19 10v1a7 7 0 01-14 0v-1M12 18.5V22M8 22h8" stroke="#1a0f00" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </svg>
+      </button>
+      <button class="send-btn" id="sendBtn" aria-label="Send" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24">
+          <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#1a0f00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── WAVEFORM GENERATION ──────────────────────────────
+function buildWaveform(containerId, count = 30) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const heights = [8,12,18,24,30,22,16,28,32,20,14,26,32,18,10,22,28,16,24,30,14,20,26,12,8,18,24,30,16,10];
+  for (let i = 0; i < count; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'wave-bar';
+    bar.style.height = (heights[i % heights.length]) + 'px';
+    bar.style.animationDelay = (i * 0.04) + 's';
+    container.appendChild(bar);
+  }
+}
+buildWaveform('wf1', 28);
+buildWaveform('wf2', 20);
+
+// ── INPUT PLACEHOLDER ──────────────────────────────
+const msgInput = document.getElementById('msgInput');
+const micBtn   = document.getElementById('micBtn');
+const sendBtn  = document.getElementById('sendBtn');
+
+msgInput.addEventListener('input', () => {
+  const text = msgInput.innerText.trim();
+  if (text.length > 0) {
+    micBtn.style.display = 'none';
+    sendBtn.classList.add('visible');
+  } else {
+    micBtn.style.display = 'flex';
+    sendBtn.classList.remove('visible');
+  }
+  // show/hide placeholder
+  if (msgInput.innerText.length === 0) {
+    msgInput.classList.remove('has-text');
+  } else {
+    msgInput.classList.add('has-text');
+  }
+});
+
+msgInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// CSS for placeholder
+const style = document.createElement('style');
+style.textContent = `
+.input-box:empty:before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+}`;
+document.head.appendChild(style);
+
+// ── SCROLL TO BOTTOM ──────────────────────────────
+function scrollBottom() {
+  const area = document.getElementById('chatArea');
+  area.scrollTo({ top: area.scrollHeight, behavior: 'smooth' });
+}
+scrollBottom();
+
+// ── ADD MESSAGE ──────────────────────────────
+function addMessage(text, side, time, isVoice = false) {
+  const area = document.getElementById('chatArea');
+  const typingEl = document.getElementById('typingIndicator');
+
+  const row = document.createElement('div');
+  row.className = `msg-row ${side}`;
+
+  const bubble = document.createElement('div');
+  bubble.className = `bubble ${side}`;
+  bubble.style.animationDelay = '0s';
+
+  if (isVoice) {
+    bubble.classList.add('voice-bubble');
+    const wfId = 'wf_' + Date.now();
+    bubble.innerHTML = `
+      <button class="play-btn" onclick="playVoice(this)" aria-label="Play">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="waveform" id="${wfId}"></div>
+      <span class="wave-dur">0:${Math.floor(Math.random()*15+5).toString().padStart(2,'0')}</span>
+      <div class="bubble-meta" style="position:absolute;bottom:6px;right:10px;">
+        <span style="font-size:10px;color:${side==='ai'?'var(--text-muted)':'rgba(0,0,0,0.5)'};">${time}</span>
+      </div>
+    `;
+    row.appendChild(bubble);
+    area.insertBefore(row, typingEl);
+    buildWaveform(wfId, 22);
+  } else {
+    const ticksHTML = side === 'user' ? `
+      <span class="ticks sent">
+        <svg viewBox="0 0 16 11" fill="none">
+          <path d="M1 5.5l3.5 3.5L9 1" stroke="rgba(30,15,0,0.5)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 5.5l3.5 3.5L15 1" stroke="rgba(30,15,0,0.5)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>` : '';
+
+    bubble.innerHTML = `${text}<div class="bubble-meta"><span>${time}</span>${ticksHTML}</div>`;
+    row.appendChild(bubble);
+    area.insertBefore(row, typingEl);
+  }
+
+  scrollBottom();
+  return row;
+}
+
+// ── TIME HELPER ──────────────────────────────
+function nowTime() {
+  const now = new Date();
+  let h = now.getHours(), m = now.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
+}
+
+// ── AI RESPONSE ENGINE ──────────────────────────────
+const responses = {
+  motivate: [
+    "Yaar, uthja! Duniya tenu wait nahi karti. Har din ik naya mauka aa. Tu Punjab da sher aa — dard sehen karo, haar nahi mano! 💪🔥",
+    "Bhai, mehnat karo, results zaroor aunge. Jo bande roz 1% better hunde ne, ik saal baad 37x better ho jaande ne. Shuru kar! 🚀",
+    "Koi vi kaam chhota nahi hunda. Ek ek kadam chal, manzil pakki milegi. Tenu pata nahi tu kitnaa powerful aa! 🦁",
+    "Life mein shortcuts nahi hunde yaar. Par tenu pta aa shortcuts toh bhi voh log hi chalte ne jo pehle long route walk karte ne 😤💥"
+  ],
+  advice: [
+    "Ik gall yaad rakh — logo nu impress karna band kar, apne aap nu improve karna shuru kar. Log tenu tab respect denge jad tu khud nu respect dega. 🙏",
+    "Paisa important aa, par connections aur character usse bhi ziada. Sahi log sahi time te tenu aage le jaate ne. Network = Net Worth! 🤝",
+    "Tera time, teri energy, tera focus — in teeno cheezaan nu sahi jagah lagao. Jo worthy nahi, usse 'na' kehna seekh. 🧠",
+    "Dono pair zameen te rakh, sar upar rakh. Humble reh, par doormat mat ban. Boundaries set karna life skill aa! 💯"
+  ],
+  business: [
+    "Koi bhi business shuru karne toh pehle ik sawal — 'Mera customer kaun aa te usse kya problem solve karni aa?' Baaki sab baad mein aata aa. 💼",
+    "Punjab mein MSME sector boom te aa. Food processing, textile, agri-tech — in fields mein scope bada aa. Research kar, opportunity pakad! 📈",
+    "Social media = free marketing. Ik consistent brand voice, regular content, genuine engagement — teri reach lakhaan tak ho sakti aa. Shuru kar aaj toh! 🎯",
+    "Invest in yourself first — skills, knowledge, network. Phir apna business. Bina strong foundation ke koi building nahi tikthi. 🏗️"
+  ],
+  down: [
+    "Yaar, sun — ik bura din poori zindagi nahi hundi. Raat kitni bhi kali ho, subah zaroor aundi aa. Tera dard real aa, te tu iss toh baahar aayega. Main tere naal aa. 🤗",
+    "Kabhi kabhi life teri test leti aa — ki tu haal chorr sakta aa ya nahi. Har chamkane wala pehle agg mein tapa hunda aa. Tu bhi tapeya aa, tu bhi chamkaga! ✨",
+    "Ik kaam kar — koi ik banda dhundh jis te tu trust karta aa, te usse dil ki gall bol. Feelings share karna weakness nahi, bravery aa. 💪",
+    "Ghabra mat. Kabhi kabhi low feel karna normal aa — iska matlab tenu sab kuch reset karna painda aa. Rest kar, breathe kar, phir vapis aa! 🌅"
+  ],
+  gaming: [
+    "Gaming ke liye PS4 best choice aa 20k budget mein! Offline games de liye tenu PSN subscription di zaroorat nahi — God of War, Spider-Man, RDR2 enjoy karo! 🎮",
+    "Bhai, PC gaming bhi consider kar. 20k mein ik decent used PC mil jaanda aa jo PS4 toh zyada versatile hunda aa. Par console wali feeling alag hundi aa! 🖥️",
+    "Online vs offline — budget gaming ke liye offline better aa. No monthly fees, no internet required, same great games! Smart choice yaar! 💡"
+  ],
+  default: [
+    "Haan yaar, main samjha! Koi specific sawaal pucho — gaming, business, life, motivation — main poori help karunga! 🔥",
+    "Bhai, interesting topic aa tenu! Zyada detail deo te main better advise de sakda aa. Punjab Hustler hamesha ready aa! 💪",
+    "Sahi sawaal yaar! Iss baare mein kafi kuch kehna aa. Kis angle toh dekhna chahunda aa tu? Gaming, personal growth, ya kuch aur? 🎯",
+    "Oh bhai, mainu lagda aa tu sahi track te aa! Bas focus rakh te consistent reh. Success te Punjab da jhanda zaroor gaddanga! 🏆"
+  ]
+};
+
+function generateAIResponse(message) {
+  const m = message.toLowerCase();
+  if (m.includes('motivat') || m.includes('inspire') || m.includes('energy') || m.includes('push'))
+    return getRandom(responses.motivate);
+  if (m.includes('life') || m.includes('advice') || m.includes('suggest') || m.includes('tips') || m.includes('help'))
+    return getRandom(responses.advice);
+  if (m.includes('business') || m.includes('startup') || m.includes('money') || m.includes('invest') || m.includes('earn'))
+    return getRandom(responses.business);
+  if (m.includes('down') || m.includes('sad') || m.includes('depress') || m.includes('lonely') || m.includes('hurt') || m.includes('cry'))
+    return getRandom(responses.down);
+  if (m.includes('game') || m.includes('gaming') || m.includes('ps4') || m.includes('ps5') || m.includes('xbox') || m.includes('hdmi'))
+    return getRandom(responses.gaming);
+  return getRandom(responses.default);
+}
+
+function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+// ── SEND MESSAGE ──────────────────────────────
+function sendMessage() {
+  const text = msgInput.innerText.trim();
+  if (!text) return;
+
+  const t = nowTime();
+  addMessage(text, 'user', t);
+  msgInput.innerText = '';
+  msgInput.dispatchEvent(new Event('input'));
+  micBtn.style.display = 'flex';
+  sendBtn.classList.remove('visible');
+
+  // show typing
+  const ti = document.getElementById('typingIndicator');
+  ti.classList.add('visible');
+  scrollBottom();
+
+  const delay = 1200 + Math.random() * 800;
+  setTimeout(() => {
+    ti.classList.remove('visible');
+    const reply = generateAIResponse(text);
+    addMessage(reply, 'ai', nowTime());
+  }, delay);
+}
+
+// ── QUICK ACTIONS ──────────────────────────────
+function quickAction(text) {
+  msgInput.innerText = text;
+  msgInput.dispatchEvent(new Event('input'));
+  sendMessage();
+}
+
+// ── MIC BUTTON ──────────────────────────────
+let recording = false;
+let recordTimeout = null;
+function handleMic() {
+  if (recording) return;
+  recording = true;
+  micBtn.classList.add('recording');
+  micBtn.querySelector('svg').innerHTML = `
+    <rect x="9" y="9" width="6" height="6" rx="1"/>`;
+
+  recordTimeout = setTimeout(() => {
+    recording = false;
+    micBtn.classList.remove('recording');
+    micBtn.querySelector('svg').innerHTML = `
+      <path d="M12 1a4 4 0 014 4v6a4 4 0 01-8 0V5a4 4 0 014-4z"/>
+      <path d="M19 10v1a7 7 0 01-14 0v-1M12 18.5V22M8 22h8" stroke="#1a0f00" stroke-width="1.5" stroke-linecap="round" fill="none"/>`;
+    addMessage('', 'user', nowTime(), true);
+
+    const ti = document.getElementById('typingIndicator');
+    ti.classList.add('visible');
+    scrollBottom();
+    setTimeout(() => {
+      ti.classList.remove('visible');
+      addMessage('', 'ai', nowTime(), true);
+    }, 1800);
+  }, 2000);
+}
+
+// ── PLAY VOICE ──────────────────────────────
+function playVoice(btn) {
+  const isPlaying = btn.dataset.playing === '1';
+  if (isPlaying) {
+    btn.dataset.playing = '0';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+    const bars = btn.closest('.voice-bubble').querySelectorAll('.wave-bar');
+    bars.forEach(b => { b.style.animationPlayState = 'paused'; b.style.opacity = ''; });
+    return;
+  }
+  btn.dataset.playing = '1';
+  btn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`;
+  const bars = btn.closest('.voice-bubble').querySelectorAll('.wave-bar');
+  bars.forEach(b => { b.style.animationPlayState = 'running'; b.style.opacity = '1'; });
+
+  const dur = btn.closest('.voice-bubble').querySelector('.wave-dur').textContent;
+  const secs = parseInt(dur.split(':')[1]) || 10;
+  setTimeout(() => {
+    btn.dataset.playing = '0';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+    bars.forEach(b => { b.style.animationPlayState = 'paused'; });
+  }, secs * 1000);
+}
+
+// ── INIT SCROLL ──────────────────────────────
+setTimeout(scrollBottom, 100);
+</script>
+</body>
+</html>
